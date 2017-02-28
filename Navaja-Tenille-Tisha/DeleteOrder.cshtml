@@ -1,0 +1,79 @@
+﻿@{
+    var orderNum = "";
+    var customer = "";
+    var dateOrdered = "";
+    var total = "";
+    var orderId = "";
+
+    if (!IsPost)
+    {
+        if (!Request.QueryString["deskOrderID"].IsEmpty() && Request.QueryString["deskOrderID"].IsInt())
+        {
+            orderId = Request.QueryString["deskOrderID"];
+            var db = Database.Open("NavajaDeskOrders");
+            var dbCommand = "SELECT * FROM deskorder WHERE deskOrderID = @0";
+            var row = db.QuerySingle(dbCommand, orderId);
+            if (row != null)
+            {
+                orderNum = row.orderNumber.ToString();
+                customer = row.name;
+                dateOrdered = row.orderDate.ToString();
+                total = row.totalPrice.ToString();
+            }
+            else {
+                Validation.AddFormError("No order was found for that ID.");
+            }
+        }
+        else {
+            Validation.AddFormError("No order was found for that ID.");
+        }
+    }
+    if (IsPost && !Request["buttonDelete"].IsEmpty())
+    {
+        orderId = Request.Form["orderId"];
+        var db = Database.Open("NavajaDeskOrders");
+        var deleteCommand = "DELETE FROM deskorder WHERE deskOrderID = @0";
+        db.Execute(deleteCommand, orderId);
+        Response.Redirect("~/NavajaDesksHome");
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Order</title>
+</head>
+<body>
+    <h1>Delete Order</h1>
+    @Html.ValidationSummary()
+    <p><a href="~/NavajaDesksHome">Return to Orders</a></p>
+
+    <form method="post">
+        <fieldset>
+            <legend>Order Details</legend>
+
+            <p>
+                <span>Order Number:</span>
+                <span>@orderNum</span>
+            </p>
+
+            <p>
+                <span>Customer Name:</span>
+                <span>@customer</span>
+            </p>
+
+            <p>
+                <span>Date Created:</span>
+                <span>@dateOrdered</span>
+            </p>
+
+            <p>
+                <span>Total Price:</span>
+                <span>@total</span>
+            </p>
+
+            <input type="hidden" name="orderid" value="@orderId" />
+            <p><input type="submit" name="buttonDelete" value="Delete Order" /></p>
+        </fieldset>
+    </form>
+</body>
+</html>
