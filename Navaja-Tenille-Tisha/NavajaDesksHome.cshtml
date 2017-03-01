@@ -19,7 +19,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Navaja Custom Desks</title>
         <link href="~/styles/bootstrap.css" rel="stylesheet" />
-        <style type="text/css">
+        @*<style type="text/css">
             .grid {
                 margin: 4px;
                 border-collapse: collapse;
@@ -41,51 +41,48 @@
                 background-color: #f1d7d7;
                 color: #000;
             }
-        </style>
+        </style>*@
     </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="~/">Navaja Custom Desks</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="~/">Home</a></li>
-                    <li><a href="~/About">About</a></li>
-                    <li><a href="~/Contact">Contact</a></li>
-                </ul>
-            </div>
-       </div>
-</div>
-
+    @RenderPage("~/Shared/_Navigation.cshtml")
         <header class="jumbotron">
-            <h1 class="text-center"> Navaja Custom Desks</h1>
+            <h1 class="text-center text-uppercase"> Navaja Custom Desks</h1>
         </header>
 
         <div class="row">
             <div class="col-md-6 col-md-offset-1">
                 <h2>Past Orders</h2>
                 @grid.GetHtml(
-                    tableStyle: "grid",
-                    headerStyle: "head",
-                    alternatingRowStyle: "alt",
+                    tableStyle: "table table-striped table-bordered",
                     columns: grid.Columns(
                         grid.Column(format: @<a href="~/EditOrder?deskOrderID=@item.deskOrderID">Edit</a>),
-                        grid.Column("orderNumber"),
-                        grid.Column("width"),
-                        grid.Column("length"),
-                        grid.Column("numDrawer"),
-                        grid.Column("materialType"),
-                        grid.Column("name"),
-                        grid.Column("orderDate"),
-                        grid.Column("totalPrice"),
-                        grid.Column("fk_rushOrderID"),
+                        grid.Column(
+                            columnName: "orderNumber",
+                            header: "Order Number"),
+                        grid.Column(
+                            columnName: "width",
+                            header: "Width"),
+                        grid.Column(
+                            columnName: "length",
+                            header: "Length"),
+                        grid.Column(
+                            columnName: "numDrawer",
+                            header: "Number of Drawers"),
+                        grid.Column(
+                            columnName: "materialType",
+                            header: "Material Type"),
+                        grid.Column(
+                            columnName: "name",
+                            header: "Customer Name"),
+                        grid.Column(
+                            columnName: "orderDate",
+                            header: "Order Date"),
+                        grid.Column(
+                            columnName: "totalPrice",
+                            header: "Total Price"),
+                        grid.Column(
+                            columnName: "fk_rushOrderID",
+                            header: "Rush Order"),
                         grid.Column(format: @<a href="~/DeleteOrder?deskOrderID=@item.deskOrderID">Delete</a>)
     )
 )
@@ -106,5 +103,6 @@
                 </form>
             </div>
         </div>
+    @RenderPage("~/Shared/_Footer.cshtml")
 </body>
 </html>

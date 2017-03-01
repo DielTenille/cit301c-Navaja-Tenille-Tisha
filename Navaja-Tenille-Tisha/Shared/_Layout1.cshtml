@@ -1,0 +1,49 @@
+﻿@*<!DOCTYPE html>
+<html>
+    <head>
+        <title>@Page.Title</title>
+        <link href="~/styles/bootstrap.css" rel="stylesheet" />
+        @RenderSection("head", required: false)
+    </head>
+    <body>
+        @RenderBody()
+    </body>
+</html>*@
+@*<!DOCTYPE html>
+    <html>
+    <head>
+        <title>Structured Content </title>
+        <link href="~/styles/bootstrap.css" rel="stylesheet" />
+    </head>
+    <body>
+        @RenderPage("~/Shared/_Header2.cshtml")
+        <div id="main">
+            @RenderBody()
+        </div>
+        <div id="footer">
+            &copy; 2017 Tenille &amp Tisha Inc. All rights reserved.
+        </div>
+    </body>
+    </html>*@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Multisection Content</title>
+    <link href="~/styles/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+    @RenderPage("_Navigation.cshtml")
+    <div id="header">
+        @RenderSection("header", required: false)
+    </div>
+    <div id="list">
+        @RenderSection("list", required: false)
+    </div>
+    <div id="main">
+        @RenderBody()
+    </div>
+    <div class="modal-footer" id="footer">
+        @RenderPage("_Footer.cshtml")
+    </div>
+</body>
+</html>

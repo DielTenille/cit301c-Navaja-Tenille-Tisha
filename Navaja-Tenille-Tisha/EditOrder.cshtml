@@ -2,6 +2,7 @@
     var orderNum = "";
     var customer = "";
     var dateOrdered = "";
+    var lastUpdated = "";
     int deskWidth;
     var deskWidthEntered = "";
     int deskLength;
@@ -30,6 +31,7 @@
                 orderNum = row.orderNumber.ToString();
                 customer = row.name;
                 dateOrdered = row.orderDate.ToString();
+                lastUpdated = row.dateModified.ToString();
                 deskWidthEntered = row.width.ToString();
                 deskLengthEntered = row.length.ToString();
                 drawersEntered = row.numDrawer.ToString();
@@ -72,15 +74,16 @@
         rushEntered = Request.Form["rushEntered"];
         rush = rushEntered.AsInt();
 
-        totalEntered = Request.Form["totalEntered"];
-        total = totalEntered.AsDecimal();
+        //totalEntered = Request.Form["totalEntered"];  //Need to do something different here to recalculate the total based on changes to certain fields
+        //total = totalEntered.AsDecimal();
 
+        orderId = Request.QueryString["deskOrderID"];
         orderIdInt = orderId.AsInt();
 
         if (Validation.IsValid())
         {
             var db = Database.Open("NavajaDeskOrders");
-            var updateCommand = "UPDATE deskorder SET width=@0, length=@1, numDrawer=@2, materialType=@3, name=@4, orderDate=@5 WHERE deskOrderID=@6";
+            var updateCommand = "UPDATE deskorder SET width=@0, length=@1, numDrawer=@2, materialType=@3, name=@4, dateModified=@5 WHERE deskOrderID=@6";
             db.Execute(updateCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, orderIdInt);
             Response.Redirect("~/NavajaDesksHome");
         }
@@ -90,69 +93,103 @@
 <html>
 <head>
     <title>Edit Order</title>
+    <link href="~/styles/bootstrap.css" rel="stylesheet" />
 </head>
 <body>
-    <h1>Edit Order</h1>
-    @Html.ValidationSummary()
-    <p><a href="~/NavajaDesksHome">Return to Orders</a></p>
+    @RenderPage("~/Shared/_Navigation.cshtml")
+        <header class="jumbotron">
+            <h1 class="text-center text-uppercase">Edit Order</h1>
+        </header>
+          
+    <div class="container">
+        @Html.ValidationSummary()
+        <p><a href="~/NavajaDesksHome">Return to Orders</a></p>
+        <form method="post">
+            <fieldset class="form-group">
+                <legend class="col-form-legend">Order Details</legend>
 
-    <form method="post">
-        <fieldset>
-            <legend>Order Details</legend>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Order Number:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="orderNum" value="@orderNum" readonly />
+                    </div>
+                </div>
 
-            <p>
-                <label>Order Number:</label>
-                <span>@orderNum</span> @*readonly*@
-            </p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Date Created:</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" name="dateCreated" value="@dateOrdered" readonly />
+                    </div>
+                    <label class="col-sm-2 col-form-label">Last Updated:</label>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" name="dateCreated" value="@dateOrdered" readonly />
+                    </div>
+                </div>
 
-            <p>
-                <label>Date Created:</label>
-                <span>@dateOrdered</span>
-            </p>
-
-            <p>
-                <label>Customer Name:</label>
-                <input type="text" name="customer" value="@customer" />
-            </p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Customer Name:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="customer" value="@customer" />
+                    </div>
+                </div>
 
 
-            <p>
-                <label>Desk Width:</label>
-                <input type="text" name="deskWidthEntered" value="@deskWidthEntered" />
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Desk Width:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="deskWidthEntered" value="@deskWidthEntered" />
 
-            </p>
+                    </div>
+                </div>
 
-            <p>
-                <label>Desk Length:</label>
-                <input type="text" name="deskLengthEntered" value="@deskLengthEntered" />
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Desk Length:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="deskLengthEntered" value="@deskLengthEntered" />
+                    </div>
+                </div>
 
-            </p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Number of Drawers:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="drawersEntered" value="@drawersEntered" />
 
-            <p>
-                <label>Number of Drawers:</label>
-                <input type="text" name="drawersEntered" value="@drawersEntered" />
+                    </div>
+                </div>
 
-            </p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Desk Material:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="material" value="@material" />
 
-            <p>
-                <label>Desk Material:</label>
-                <input type="text" name="material" value="@material" />
-         
-            </p>
+                    </div>
+                </div>
 
-            <p>
-                <label>Rush Order Option:</label>
-                <input type="text" name="rushEntered" value="@rushEntered" />
-            </p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Rush Order Option:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="rushEntered" value="@rushEntered" />
+                    </div>
+                </div>
 
-            <p>
-                <label>Total Price:</label>
-                <span>@totalEntered</span> @*readonly (we need to caculate this after a change)*@
-            </p>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Total Price:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" type="text" name="totalEntered" value="$@totalEntered" readonly /> @*readonly (we need to caculate this after a change)*@
+                    </div>
+                </div>
 
-            <input type="hidden" name="orderid" value="@orderId" />
-            <p><input type="submit" name="buttonEdit" value="Edit Order" /></p>
-        </fieldset>
-    </form>
+                <input type="hidden" name="orderid" value="@orderId" />
+                </fieldset>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label"></label>
+                    <div class="col-sm-10">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit" name="buttonEdit" value="Edit Order" >Edit Order</button>
+                    </div>
+                </div>
+            
+        </form>
+    </div>
+    @RenderPage("~/Shared/_Footer.cshtml")
 </body>
 </html>

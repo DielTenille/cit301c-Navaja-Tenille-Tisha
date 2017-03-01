@@ -133,6 +133,12 @@
     <Content Include="EditOrder.cshtml" />
     <Content Include="DeleteOrder.cshtml" />
     <Content Include="OrderDetails.cshtml" />
+    <Content Include="Shared\_Footer.cshtml" />
+    <Content Include="Shared\_Layout1.cshtml" />
+    <Content Include="Content1.cshtml" />
+    <Content Include="Shared\_Navigation.cshtml" />
+    <Content Include="About.cshtml" />
+    <Content Include="Contact.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
