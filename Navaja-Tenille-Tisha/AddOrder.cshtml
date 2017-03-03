@@ -1,13 +1,6 @@
 ﻿@{
-
-    DateTime date = DateTime.Now;
-
-
-
     var orderNum = "";
     var customer = "";
-    var dateOrdered = "";
-    var lastUpdated = "";
     int deskWidth;
     var deskWidthEntered = "";
     int deskLength;
@@ -24,35 +17,18 @@
 
     if (!IsPost)
     {
-        if (!Request.QueryString["deskOrderID"].IsEmpty() && Request.QueryString["deskOrderID"].IsInt())
-        {
-            orderId = Request.QueryString["deskOrderID"];
-            var db = Database.Open("NavajaDeskOrders");
-            var dbCommand = "SELECT * FROM deskorder WHERE deskOrderID = @0";
-            var row = db.QuerySingle(dbCommand, orderId);
+        var db = Database.Open("NavajaDeskOrders");
+        var selectCommand = "SELECT * FROM deskorder WHERE orderNumber = @0";
 
-            if (row != null)
-            {
-                orderNum = row.orderNumber.ToString();
-                customer = row.name;
-                dateOrdered = row.orderDate.ToString();
-                lastUpdated = row.dateModified.ToString();
-                deskWidthEntered = row.width.ToString();
-                deskLengthEntered = row.length.ToString();
-                drawersEntered = row.numDrawer.ToString();
-                material = row.materialType;
-                rushEntered = row.fk_rushOrderID.ToString();
-                totalEntered = row.totalPrice.ToString();
-            }
-            else {
-                Validation.AddFormError("No order was found for that ID.");
-            }
-        }
-        else {
-            Validation.AddFormError("No order was found for that ID.");
-        }
+        //Create random order ID
+        Random rand = new Random();
+        int orderID= rand.Next(0, 9999);
+        //var selectedData = db.Query(selectCommand, orderID);  //Need to add a check that the number isn't already in the database (or find out if I could use a sequence or something for the order number field)
+        //if ()
+        //    //Populate Order Number field with code
+        //    orderNum = orderID.ToString();
+
     }
-
     if (IsPost)
     {
 
@@ -79,8 +55,8 @@
         rushEntered = Request.Form["rushEntered"];
         rush = rushEntered.AsInt();
 
-        //totalEntered = Request.Form["totalEntered"];  //Need to do something different here to recalculate the total based on changes to certain fields
-        //total = totalEntered.AsDecimal();
+        totalEntered = Request.Form["totalEntered"];
+        total = totalEntered.AsDecimal();
 
         orderId = Request.QueryString["deskOrderID"];
         orderIdInt = orderId.AsInt();
@@ -88,8 +64,8 @@
         if (Validation.IsValid())
         {
             var db = Database.Open("NavajaDeskOrders");
-            var updateCommand = "UPDATE deskorder SET width=@0, length=@1, numDrawer=@2, materialType=@3, name=@4, dateModified=@5 WHERE deskOrderID=@6";
-            db.Execute(updateCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, orderIdInt);
+            var insertCommand = "INSERT INTO deskorder (width, length, numDrawer, materialType, name, orderDate, totalPrice, fk_rushOrderID, orderNumber, dateModified) VALUES(@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10)";
+            db.Execute(insertCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, total, rush, orderIdInt, DateTime.Now);
             Response.Redirect("~/NavajaDesksHome");
         }
     }
@@ -116,18 +92,7 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Order Number:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="orderNum" value="@orderNum" readonly /> @**@
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Date Created:</label>
-                    <div class="col-sm-4">
-                        <input class="form-control" type="text" name="dateCreated" value="@date" readonly />
-                    </div>
-                    <label class="col-sm-2 col-form-label">Last Updated:</label>
-                    <div class="col-sm-4">
-                        <input class="form-control" type="text" name="dateCreated" value="@date" readonly />
+                        <input class="form-control" type="text" name="orderNum" value="@orderNum" readonly />
                     </div>
                 </div>
 
@@ -142,7 +107,18 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desk Width:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="deskWidthEntered" value="" />
+                        <select class="form-control" name="deskWidthEntered">
+                            <option>24</option>
+                            <option>28</option>
+                            <option>32</option>
+                            <option>36</option>
+                            <option>40</option>
+                            <option>44</option>
+                            <option>48</option>
+                            <option>52</option>
+                            <option>56</option>
+                            <option>60</option>
+                        </select>
 
                     </div>
                 </div>
@@ -150,22 +126,59 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desk Length:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="deskLengthEntered" value="" />
+                        <select class="form-control" name="deskLengthEntered">
+                            <option>24</option>
+                            <option>28</option>
+                            <option>32</option>
+                            <option>36</option>
+                            <option>40</option>
+                            <option>44</option>
+                            <option>48</option>
+                            <option>52</option>
+                            <option>56</option>
+                            <option>60</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Number of Drawers:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="drawersEntered" value="" />
-
+                        <select class="form-control" name="drawersEntered">
+                            <option>0</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group row">
+                   
+
                     <label class="col-sm-2 col-form-label">Desk Material:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="material" value="" />
+                        <input id="pine" type="radio" name="material" value="Pine" />
+                        <label class="form-check-label" for="pine"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60"/></label>
+
+                        <input id="oak" type="radio" name="material" value="Oak" />
+                        <label class="form-check-label" for="oak"><img class="img-rounded" src="~/images/oak_sample.jpg" width="70" height="60" /></label>
+
+                        <input id="maple" type="radio" name="material" value="Maple" />
+                        <label class="form-check-label" for="maple"><img class="img-rounded" src="~/images/laminate-sample.jpg" width="70" height="60" /></label>
+
+                        <input id="ash" type="radio" name="material" value="Ash" />
+                        <label class="form-check-label" for="ash"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
+
+                        <input id="cherry" type="radio" name="material" value="Cherry" />
+                        <label class="form-check-label" for="cherry"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
+
+                        <input id="birch" type="radio" name="material" value="Birch" />
+                        <label class="form-check-label" for="birch"><img class="img-rounded" src="~/images/laminate-sample.jpg" width="70" height="60" /></label>
 
                     </div>
                 </div>
@@ -173,7 +186,12 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Rush Order Option:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="rushEntered" value="" />
+                        <select class="form-control" name="rushEntered">
+                            <option value="0">None</option>
+                            <option>3</option>
+                            <option>5</option>
+                            <option>7</option>
+                        </select>
                     </div>
                 </div>
 
