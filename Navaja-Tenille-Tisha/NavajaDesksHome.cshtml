@@ -19,40 +19,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Navaja Custom Desks</title>
         <link href="~/styles/bootstrap.css" rel="stylesheet" />
-        @*<style type="text/css">
-            .grid {
-                margin: 4px;
-                border-collapse: collapse;
-                width: 600px;
-            }
-
-                .grid th, .grid td {
-                    border: 1px solid #C0C0C0;
-                    padding: 5px;
-                }
-
-            .head {
-                background-color: #E8E8E8;
-                font-weight: bold;
-                color: #FFF;
-            }
-
-            .alt {
-                background-color: #f1d7d7;
-                color: #000;
-            }
-        </style>*@
     </head>
 <body>
     @RenderPage("~/Shared/_Navigation.cshtml")
         <header class="jumbotron">
             <h1 class="text-center text-uppercase"> Navaja Custom Desks</h1>
         </header>
+    <div class="container">
+        <div class="row">
+            
+                <div class="col-md-4 col-md-offset-8">
+                    <h4>Search Orders</h4>
+                    <form method="get">
+                        <div>
+                            <label for="searchName">Name:</label>
+                            <input type="text" name="searchName" value="@Request.QueryString["searchName"]" />
+                            <input type="Submit" value="Search Name" /><br />
+                        </div>
+                    </form>
+                </div>
+                </div>
 
         <div class="row">
-            <div class="col-md-6 col-md-offset-1">
-                <h2>Past Orders</h2>
-                @grid.GetHtml(
+        <div class="col-sm-12">
+            <h2>Past Orders</h2>
+            @grid.GetHtml(
                     tableStyle: "table table-striped table-bordered",
                     columns: grid.Columns(
                         grid.Column(format: @<a href="~/EditOrder?deskOrderID=@item.deskOrderID">Edit</a>),
@@ -86,23 +77,11 @@
                         grid.Column(format: @<a href="~/DeleteOrder?deskOrderID=@item.deskOrderID">Delete</a>)
     )
 )
-                <p>
-                    <a href="~/AddOrder">Add an Order</a>
-                </p>
-
-            </div>
-
-            <div class="col-md-4 col-md-offset-1">
-                <h2>Search Orders</h2>
-                <form method="get">
-                    <div>
-                        <label for="searchName">Name:</label>
-                        <input type="text" name="searchName" value="@Request.QueryString["searchName"]" />
-                        <input type="Submit" value="Search Name" /><br />
-                    </div>
-                </form>
-            </div>
+            <br />
+            <a href="~/AddOrder">Add an Order</a>
         </div>
+           </div>
+        <br />
     @RenderPage("~/Shared/_Footer.cshtml")
 </body>
 </html>

@@ -14,19 +14,20 @@
     decimal total;
     var orderId = "";
     int orderIdInt;
+    decimal basePrice = 200;
 
     if (!IsPost)
     {
-        var db = Database.Open("NavajaDeskOrders");
-        var selectCommand = "SELECT * FROM deskorder WHERE orderNumber = @0";
+        //var db = Database.Open("NavajaDeskOrders");
+        //var selectCommand = "SELECT * FROM deskorder WHERE orderNumber = @0";
 
         //Create random order ID
         Random rand = new Random();
         int orderID= rand.Next(0, 9999);
         //var selectedData = db.Query(selectCommand, orderID);  //Need to add a check that the number isn't already in the database (or find out if I could use a sequence or something for the order number field)
         //if ()
-        //    //Populate Order Number field with code
-        //    orderNum = orderID.ToString();
+        //Populate Order Number field with code
+        orderNum = orderID.ToString();
 
     }
     if (IsPost)
@@ -47,29 +48,96 @@
         deskLengthEntered = Request.Form["deskLengthEntered"];
         deskLength = deskLengthEntered.AsInt();
 
+        //calculate dimensions
+        int deskDimensions = deskLength * deskWidth;
+        decimal dimensionPrice;  //Use this in final calculation
+
+
+        if (deskDimensions > 1000)
+        {
+            int extraDeskSize = deskDimensions - 1000;
+            dimensionPrice = extraDeskSize * 5;
+        }
+        else
+        {
+            dimensionPrice = 0;
+        }
+
         drawersEntered = Request.Form["drawersEntered"];
         drawers = drawersEntered.AsInt();
 
-        material = Request.Form["material"];
+        //calculate drawers
+        int drawerPrice = 50;
+        var drawerSelectionPrice = drawerPrice * drawers;  //Use this in final calculation
+
+
+        material = Request.Form["material"]; //Oak -200, Cherry - 150, Birch - 125,  Maple - 100, Ash - 75, Pine - 50
+        decimal materialPrice; //Use this in final calc
+
+        switch(material)
+        {
+            case "Oak":
+                materialPrice = 200;
+                break;
+
+            case "Cherry":
+                materialPrice = 150;
+                break;
+
+            case "Birch":
+                materialPrice = 125;
+                break;
+
+            case "Maple":
+                materialPrice = 100;
+                break;
+
+            case "Ash":
+                materialPrice = 75;
+                break;
+
+            case "Pine":
+                materialPrice = 50;
+                break;
+
+        }
 
         rushEntered = Request.Form["rushEntered"];
         rush = rushEntered.AsInt();
+        String deskShirtSize;
 
-        totalEntered = Request.Form["totalEntered"];
-        total = totalEntered.AsDecimal();
+        if (deskDimensions < 1000)
+        {
+            deskShirtSize = "small";
+        } else if (deskDimensions <= 1999) {
+            deskShirtSize = "medium";
+        } else
+        {
+            deskShirtSize = "large";
+        }
+
+        var db = Database.Open("NavajaDeskOrders");
+        var selectCommand = "SELECT rushOrderPrice FROM rushOrder WHERE numDay = @0 AND deskSize = @1";
+        var selectedData = db.Query(selectCommand, rush, deskShirtSize);
+        //decimal rushPrice = selectedData;
+
+        total = basePrice + drawerPrice + dimensionPrice + 60;
+
+        //totalEntered = Request.Form["totalEntered"];
+        //total = totalEntered.AsDecimal();
 
         orderId = Request.QueryString["deskOrderID"];
         orderIdInt = orderId.AsInt();
 
         if (Validation.IsValid())
         {
-            var db = Database.Open("NavajaDeskOrders");
+            db = Database.Open("NavajaDeskOrders");
             var insertCommand = "INSERT INTO deskorder (width, length, numDrawer, materialType, name, orderDate, totalPrice, fk_rushOrderID, orderNumber, dateModified) VALUES(@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10)";
             db.Execute(insertCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, total, rush, orderIdInt, DateTime.Now);
             Response.Redirect("~/NavajaDesksHome");
         }
     }
-}
+    }
 <!DOCTYPE html>
 <html>
 <head>
@@ -145,14 +213,14 @@
                     <label class="col-sm-2 col-form-label">Number of Drawers:</label>
                     <div class="col-sm-10">
                         <select class="form-control" name="drawersEntered">
-                            <option>0</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
+                            <option>0 - $50</option>
+                            <option>1 - $100</option>
+                            <option>2 - $150</option>
+                            <option>3 - $200</option>
+                            <option>4 - $250</option>
+                            <option>5 - $300</option>
+                            <option>6 - $350</option>
+                            <option>7 - $400</option>
                         </select>
                     </div>
                 </div>
@@ -207,7 +275,8 @@
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-10">
-                    <button class="btn btn-primary btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Add Order</button>
+                    <button class="btn btn-warning btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Calculate</button>
+                    <button class="btn btn-success btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Add Order</button>
                 </div>
             </div>
 
