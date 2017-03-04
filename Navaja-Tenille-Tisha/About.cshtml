@@ -1,0 +1,43 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <title>About</title>
+        <link href="~/styles/bootstrap.css" rel="stylesheet" />
+    </head>
+    <body>
+        @RenderPage("~/Shared/_Navigation.cshtml")
+        <header class="jumbotron">
+            <h1 class="text-center text-uppercase">About</h1>
+            <h2 class="text-center">Your contact page.</h2>
+        </header>
+        <div class="container">
+            <article>
+                <p>
+                    Use this area to provide additional information.
+                </p>
+
+                <p>
+                    Use this area to provide additional information.
+                </p>
+
+                <p>
+                    Use this area to provide additional information.
+                </p>
+            </article>
+
+            <aside>
+                <h3>Aside Title</h3>
+                <p>
+                    Use this area to provide additional information.
+                </p>
+                <ul>
+                    <li><a href="~/">Home</a></li>
+                    <li><a href="~/About">About</a></li>
+                    <li><a href="~/Contact">Contact</a></li>
+                </ul>
+            </aside>
+            
+        </div>
+        @RenderPage("~/Shared/_Footer.cshtml")
+</body>
+</html>
