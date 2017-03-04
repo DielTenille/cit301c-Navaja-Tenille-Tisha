@@ -16,6 +16,7 @@
     decimal total;
     var orderId = "";
     int orderIdInt;
+    string materialPic = "";
 
     if (!IsPost)
     {
@@ -38,6 +39,28 @@
                 material = row.materialType;
                 rushEntered = row.fk_rushOrderID.ToString();
                 totalEntered = row.totalPrice.ToString();
+
+                switch (material)
+                {
+                    case "Pine":
+                        materialPic = "images/pine-sample.jpg";
+                        break;
+                    case "Oak":
+                        materialPic = "images/oak_sample.jpg";
+                        break;
+                    case "Maple":
+                        materialPic = "images/maple-sample.jpg";
+                        break;
+                    case "Ash":
+                        materialPic = "images/ash-sample.jpg";
+                        break;
+                    case "Cherry":
+                        materialPic = "images/cherry-sample.jpg";
+                        break;
+                    case "Birch":
+                        materialPic = "images/birch-sample.jpg";
+                        break;
+                }
             }
             else {
                 Validation.AddFormError("No order was found for that ID.");
@@ -88,7 +111,7 @@
             Response.Redirect("~/NavajaDesksHome");
         }
     }
-}
+    }
 <!DOCTYPE html>
 <html>
 <head>
@@ -159,9 +182,12 @@
 
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desk Material:</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-8">
                         <input class="form-control" type="text" name="material" value="@material" />
-
+                        
+                    </div>
+                    <div class="col-sm-2">
+                        <img class="img-rounded" src="@materialPic" width="95" height="45" />
                     </div>
                 </div>
 

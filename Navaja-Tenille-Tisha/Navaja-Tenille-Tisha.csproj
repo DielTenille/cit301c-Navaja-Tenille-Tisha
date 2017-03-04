@@ -124,7 +124,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="images\laminate-sample.jpg" />
+    <Content Include="images\ash-sample.jpg" />
+    <Content Include="images\birch-sample.jpg" />
+    <Content Include="images\cherry-sample.jpg" />
+    <Content Include="images\maple-sample.jpg" />
     <Content Include="images\oak_sample.jpg" />
     <Content Include="images\pine-sample.jpg" />
     <Content Include="packages.config" />

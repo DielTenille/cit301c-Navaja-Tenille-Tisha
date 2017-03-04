@@ -16,17 +16,13 @@
     int orderIdInt;
     decimal basePrice = 200;
 
+    //Create random order ID
+    Random rand = new Random();
+    int orderID = rand.Next(0, 9999);
+
     if (!IsPost)
     {
-        //var db = Database.Open("NavajaDeskOrders");
-        //var selectCommand = "SELECT * FROM deskorder WHERE orderNumber = @0";
 
-        //Create random order ID
-        Random rand = new Random();
-        int orderID= rand.Next(0, 9999);
-        //var selectedData = db.Query(selectCommand, orderID);  //Need to add a check that the number isn't already in the database (or find out if I could use a sequence or something for the order number field)
-        //if ()
-        //Populate Order Number field with code
         orderNum = orderID.ToString();
 
     }
@@ -118,22 +114,19 @@
 
         var db = Database.Open("NavajaDeskOrders");
         var selectCommand = "SELECT rushOrderPrice FROM rushOrder WHERE numDay = @0 AND deskSize = @1";
-        var selectedData = db.Query(selectCommand, rush, deskShirtSize);
-        //decimal rushPrice = selectedData;
+        decimal rushPrice = db.QueryValue(selectCommand, rush, deskShirtSize);
 
-        total = basePrice + drawerPrice + dimensionPrice + 60;
+
+        total = basePrice + drawerPrice + dimensionPrice + rushPrice;
 
         //totalEntered = Request.Form["totalEntered"];
         //total = totalEntered.AsDecimal();
 
-        orderId = Request.QueryString["deskOrderID"];
-        orderIdInt = orderId.AsInt();
-
         if (Validation.IsValid())
         {
             db = Database.Open("NavajaDeskOrders");
-            var insertCommand = "INSERT INTO deskorder (width, length, numDrawer, materialType, name, orderDate, totalPrice, fk_rushOrderID, orderNumber, dateModified) VALUES(@0, @1, @2, @3, @4, @5, @6, @7, @8, @9, @10)";
-            db.Execute(insertCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, total, rush, orderIdInt, DateTime.Now);
+            var insertCommand = "INSERT INTO deskorder (width, length, numDrawer, materialType, name, orderDate, totalPrice, fk_rushOrderID, orderNumber, dateModified) VALUES(@0, @1, @2, @3, @4, @5, @6, @7, @8, @9)";
+            db.Execute(insertCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, total, rush, orderID, DateTime.Now);
             Response.Redirect("~/NavajaDesksHome");
         }
     }
@@ -213,14 +206,14 @@
                     <label class="col-sm-2 col-form-label">Number of Drawers:</label>
                     <div class="col-sm-10">
                         <select class="form-control" name="drawersEntered">
-                            <option>0 - $50</option>
-                            <option>1 - $100</option>
-                            <option>2 - $150</option>
-                            <option>3 - $200</option>
-                            <option>4 - $250</option>
-                            <option>5 - $300</option>
-                            <option>6 - $350</option>
-                            <option>7 - $400</option>
+                            <option value="0" >0 - $50</option>
+                            <option value="1">1 - $100</option>
+                            <option value="2">2 - $150</option>
+                            <option value="3">3 - $200</option>
+                            <option value="4">4 - $250</option>
+                            <option value="5">5 - $300</option>
+                            <option value="6">6 - $350</option>
+                            <option value="7">7 - $400</option>
                         </select>
                     </div>
                 </div>
@@ -230,25 +223,31 @@
 
                     <label class="col-sm-2 col-form-label">Desk Material:</label>
                     <div class="col-sm-10">
-                        <input id="pine" type="radio" name="material" value="Pine" />
-                        <label class="form-check-label" for="pine"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60"/></label>
-
-                        <input id="oak" type="radio" name="material" value="Oak" />
-                        <label class="form-check-label" for="oak"><img class="img-rounded" src="~/images/oak_sample.jpg" width="70" height="60" /></label>
-
-                        <input id="maple" type="radio" name="material" value="Maple" />
-                        <label class="form-check-label" for="maple"><img class="img-rounded" src="~/images/laminate-sample.jpg" width="70" height="60" /></label>
-
-                        <input id="ash" type="radio" name="material" value="Ash" />
-                        <label class="form-check-label" for="ash"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
-
-                        <input id="cherry" type="radio" name="material" value="Cherry" />
-                        <label class="form-check-label" for="cherry"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
-
-                        <input id="birch" type="radio" name="material" value="Birch" />
-                        <label class="form-check-label" for="birch"><img class="img-rounded" src="~/images/laminate-sample.jpg" width="70" height="60" /></label>
-
-                    </div>
+                        <div class="col-sm-2">
+                            <input id="pine" type="radio" name="material" value="Pine" />
+                            <label class="form-check-label" for="pine"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input id="oak" type="radio" name="material" value="Oak" />
+                            <label class="form-check-label" for="oak"><img class="img-rounded" src="~/images/oak_sample.jpg" width="70" height="60" /></label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input id="maple" type="radio" name="material" value="Maple" />
+                            <label class="form-check-label" for="maple"><img class="img-rounded" src="~/images/maple-sample.jpg" width="70" height="60" /></label>
+                        </div>
+                        <div class="col-sm-2">
+                            <input id="ash" type="radio" name="material" value="Ash" />
+                            <label class="form-check-label" for="ash"><img class="img-rounded" src="~/images/ash-sample.jpg" width="70" height="60" /></label>
+                        </div>
+                        <div class="col-sm-2">
+                                <input id="cherry" type="radio" name="material" value="Cherry" />
+                                <label class="form-check-label" for="cherry"><img class="img-rounded" src="~/images/cherry-sample.jpg" width="70" height="60" /></label>
+                        </div>
+                            <div class="col-sm-2">
+                                <input id="birch" type="radio" name="material" value="Birch" />
+                                <label class="form-check-label" for="birch"><img class="img-rounded" src="~/images/birch-sample.jpg" width="70" height="60" /></label>
+                            </div>
+                       </div>
                 </div>
 
                 <div class="form-group row">
@@ -263,19 +262,19 @@
                     </div>
                 </div>
 
-                <div class="form-group row">
+                @*<div class="form-group row">
                     <label class="col-sm-2 col-form-label">Total Price:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="totalEntered" value="$@totalEntered" readonly /> @*readonly (we need to caculate this after they submit the form)*@
+                        <input class="form-control" type="text" name="totalEntered" value="$@totalEntered" readonly /> @*readonly (we need to caculate this after they submit the form)
                     </div>
-                </div>
+                </div>*@
 
                 <input type="hidden" name="orderid" value="@orderId" />
             </fieldset>
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label"></label>
                 <div class="col-sm-10">
-                    <button class="btn btn-warning btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Calculate</button>
+                    @*<button class="btn btn-warning btn-lg btn-block" type="submit" name="buttonCalculate" value="Add Order">Calculate</button>*@
                     <button class="btn btn-success btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Add Order</button>
                 </div>
             </div>
