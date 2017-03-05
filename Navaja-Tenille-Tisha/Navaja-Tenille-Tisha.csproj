@@ -127,9 +127,11 @@
     <Content Include="images\ash-sample.jpg" />
     <Content Include="images\birch-sample.jpg" />
     <Content Include="images\cherry-sample.jpg" />
+    <Content Include="images\desk-chair.png" />
     <Content Include="images\maple-sample.jpg" />
     <Content Include="images\oak_sample.jpg" />
     <Content Include="images\pine-sample.jpg" />
+    <Content Include="NavajaDeskOrders.sdf" />
     <Content Include="packages.config" />
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

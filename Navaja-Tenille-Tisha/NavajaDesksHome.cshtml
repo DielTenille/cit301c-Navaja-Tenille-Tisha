@@ -10,7 +10,7 @@
     }
 
     var selectedData = db.Query(selectCommand, searchTerm);
-    var grid = new WebGrid(source: selectedData, defaultSort: "orderNumber", rowsPerPage: 3);
+    var grid = new WebGrid(source: selectedData, defaultSort: "orderNumber", rowsPerPage: 5);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -68,6 +68,9 @@
                         grid.Column(
                             columnName: "orderDate",
                             header: "Order Date"),
+                        grid.Column(
+                            columnName: "dateModified",
+                            header: "Last Updated"),
                         grid.Column(
                             columnName: "totalPrice",
                             header: "Total Price"),

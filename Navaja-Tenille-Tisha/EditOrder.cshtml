@@ -17,6 +17,7 @@
     var orderId = "";
     int orderIdInt;
     string materialPic = "";
+    decimal basePrice = 200;
 
     if (!IsPost)
     {
@@ -71,46 +72,114 @@
         }
     }
 
-    if (IsPost)
-    {
 
-        Validation.RequireField("customer", "Customer Name is required");
-        Validation.RequireField("deskWidthEntered", "Width is required");
-        Validation.RequireField("deskLengthEntered", "Length is required");
-        Validation.RequireField("drawersEntered", "Number of drawers is required");
-        Validation.RequireField("material", "Material is required");
-        Validation.RequireField("rushEntered", "Rush Order Option is required");
-
-        customer = Request.Form["customer"];
-
-        deskWidthEntered = Request.Form["deskWidthEntered"];
-        deskWidth = deskWidthEntered.AsInt();
-
-        deskLengthEntered = Request.Form["deskLengthEntered"];
-        deskLength = deskLengthEntered.AsInt();
-
-        drawersEntered = Request.Form["drawersEntered"];
-        drawers = drawersEntered.AsInt();
-
-        material = Request.Form["material"];
-
-        rushEntered = Request.Form["rushEntered"];
-        rush = rushEntered.AsInt();
-
-        //totalEntered = Request.Form["totalEntered"];  //Need to do something different here to recalculate the total based on changes to certain fields
-        //total = totalEntered.AsDecimal();
-
-        orderId = Request.QueryString["deskOrderID"];
-        orderIdInt = orderId.AsInt();
-
-        if (Validation.IsValid())
+        if (IsPost)
         {
+
+            Validation.RequireField("customer", "Customer Name is required");
+            Validation.RequireField("deskWidthEntered", "Width is required");
+            Validation.RequireField("deskLengthEntered", "Length is required");
+            Validation.RequireField("drawersEntered", "Number of drawers is required");
+            Validation.RequireField("material", "Material is required");
+            Validation.RequireField("rushEntered", "Rush Order Option is required");
+
+            customer = Request.Form["customer"];
+
+            deskWidthEntered = Request.Form["deskWidthEntered"];
+            deskWidth = deskWidthEntered.AsInt();
+
+            deskLengthEntered = Request.Form["deskLengthEntered"];
+            deskLength = deskLengthEntered.AsInt();
+
+            //calculate dimensions
+            int deskDimensions = deskLength * deskWidth;
+            decimal dimensionPrice;  //Use this in final calculation
+
+
+            if (deskDimensions > 1000)
+            {
+                int extraDeskSize = deskDimensions - 1000;
+                dimensionPrice = extraDeskSize * 5;
+            }
+            else
+            {
+                dimensionPrice = 0;
+            }
+
+            drawersEntered = Request.Form["drawersEntered"];
+            drawers = drawersEntered.AsInt();
+
+            //calculate drawers
+            int drawerPrice = 50;
+            var drawerSelectionPrice = drawerPrice * drawers;  //Use this in final calculation
+
+
+            material = Request.Form["material"]; //Oak -200, Cherry - 150, Birch - 125,  Maple - 100, Ash - 75, Pine - 50
+            decimal materialPrice; //Use this in final calc
+
+            switch (material)
+            {
+                case "Oak":
+                    materialPrice = 200;
+                    break;
+
+                case "Cherry":
+                    materialPrice = 150;
+                    break;
+
+                case "Birch":
+                    materialPrice = 125;
+                    break;
+
+                case "Maple":
+                    materialPrice = 100;
+                    break;
+
+                case "Ash":
+                    materialPrice = 75;
+                    break;
+
+                case "Pine":
+                    materialPrice = 50;
+                    break;
+
+            }
+
+            rushEntered = Request.Form["rushEntered"];
+            rush = rushEntered.AsInt();
+            String deskShirtSize;
+
+            if (deskDimensions < 1000)
+            {
+                deskShirtSize = "small";
+            }
+            else if (deskDimensions <= 1999)
+            {
+                deskShirtSize = "medium";
+            }
+            else
+            {
+                deskShirtSize = "large";
+            }
+
             var db = Database.Open("NavajaDeskOrders");
-            var updateCommand = "UPDATE deskorder SET width=@0, length=@1, numDrawer=@2, materialType=@3, name=@4, dateModified=@5 WHERE deskOrderID=@6";
-            db.Execute(updateCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, orderIdInt);
-            Response.Redirect("~/NavajaDesksHome");
+            var selectCommand = "SELECT rushOrderPrice FROM rushOrder WHERE numDay = @0 AND deskSize = @1";
+            decimal rushPrice = db.QueryValue(selectCommand, rush, deskShirtSize);
+
+
+            total = basePrice + drawerPrice + dimensionPrice + rushPrice;
+
+            orderId = Request.QueryString["deskOrderID"];
+            orderIdInt = orderId.AsInt();
+
+            if (Validation.IsValid())
+            {
+                db = Database.Open("NavajaDeskOrders");
+                var updateCommand = "UPDATE deskorder SET width=@0, length=@1, numDrawer=@2, materialType=@3, name=@4, dateModified=@5, totalPrice=@6, fk_rushOrderID=@7 WHERE deskOrderID=@8";
+                db.Execute(updateCommand, deskWidth, deskLength, drawers, material, customer, DateTime.Now, total, rush, orderIdInt);
+                Response.Redirect("~/NavajaDesksHome");
+            }
         }
-    }
     }
 <!DOCTYPE html>
 <html>
@@ -125,7 +194,8 @@
         </header>
           
     <div class="container">
-        @Html.ValidationSummary()
+            @Html.ValidationSummary()
+
         <p><a href="~/NavajaDesksHome">Return to Orders</a></p>
         <form method="post">
             <fieldset class="form-group">
@@ -145,7 +215,7 @@
                     </div>
                     <label class="col-sm-2 col-form-label">Last Updated:</label>
                     <div class="col-sm-4">
-                        <input class="form-control" type="text" name="dateCreated" value="@dateOrdered" readonly />
+                        <input class="form-control" type="text" name="dateCreated" value="@lastUpdated" readonly />
                     </div>
                 </div>
 
@@ -160,7 +230,19 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desk Width:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="deskWidthEntered" value="@deskWidthEntered" />
+                        <select class="form-control" name="deskWidthEntered">
+                            <option value="@deskWidthEntered" selected>@deskWidthEntered</option>
+                            <option value="24">24</option>
+                            <option value="28">28</option>
+                            <option value="32">32</option>
+                            <option value="36">36</option>
+                            <option value="40">40</option>
+                            <option value="44">44</option>
+                            <option value="48">48</option>
+                            <option value="52">52</option>
+                            <option value="56">56</option>
+                            <option value="60">60</option>
+                        </select>
 
                     </div>
                 </div>
@@ -168,23 +250,52 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desk Length:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="deskLengthEntered" value="@deskLengthEntered" />
+                        <select class="form-control" name="deskLengthEntered">
+                            <option value="@deskLengthEntered" selected>@deskLengthEntered</option>
+                            <option value="24">24</option>
+                            <option value="28">28</option>
+                            <option value="32">32</option>
+                            <option value="36">36</option>
+                            <option value="40">40</option>
+                            <option value="44">44</option>
+                            <option value="48">48</option>
+                            <option value="52">52</option>
+                            <option value="56">56</option>
+                            <option value="60">60</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Number of Drawers:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="drawersEntered" value="@drawersEntered" />
+                        <select class="form-control" name="drawersEntered">
+                            <option value="@drawersEntered" selected>@drawersEntered</option>
+                            <option value="0">0 - $0</option>
+                            <option value="1">1 - $50</option>
+                            <option value="2">2 - $100</option>
+                            <option value="3">3 - $150</option>
+                            <option value="4">4 - $200</option>
+                            <option value="5">5 - $250</option>
+                            <option value="6">6 - $300</option>
+                            <option value="7">7 - $350</option>
+                        </select> 
 
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Desk Material:</label>
-                    <div class="col-sm-8">
-                        <input class="form-control" type="text" name="material" value="@material" />
-                        
+                    <div class="col-sm-8">                        
+                            <select class="form-control" name="material">
+                                <option value="@material" selected>@material</option>
+                                <option value="Pine">Pine</option>
+                                <option value="Oak">Oak</option>
+                                <option value="Maple">Maple</option>
+                                <option value="Ash">Ash</option>
+                                <option value="Cherry">Cherry</option>
+                                <option value="Birch">Birch</option>
+                            </select>                        
                     </div>
                     <div class="col-sm-2">
                         <img class="img-rounded" src="@materialPic" width="95" height="45" />
@@ -194,7 +305,13 @@
                 <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Rush Order Option:</label>
                     <div class="col-sm-10">
-                        <input class="form-control" type="text" name="rushEntered" value="@rushEntered" />
+                        <select class="form-control" name="rushEntered">
+                            <option class="disabled" value="@rushEntered" selected>@rushEntered</option>
+                            <option value="0">0</option>
+                            <option value="3">3</option>
+                            <option value="5">5</option>
+                            <option value="7">7</option>                            
+                        </select>  
                     </div>
                 </div>
 

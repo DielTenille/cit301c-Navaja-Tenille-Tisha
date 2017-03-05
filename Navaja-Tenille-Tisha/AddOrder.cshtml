@@ -119,8 +119,6 @@
 
         total = basePrice + drawerPrice + dimensionPrice + rushPrice;
 
-        //totalEntered = Request.Form["totalEntered"];
-        //total = totalEntered.AsDecimal();
 
         if (Validation.IsValid())
         {
@@ -144,143 +142,144 @@
     </header>
 
     <div class="container">
-        @Html.ValidationSummary()
-        <p><a href="~/NavajaDesksHome">Return to Orders</a></p>
-        <form method="post">
-            <fieldset class="form-group">
-                <legend class="col-form-legend">Order Details</legend>
+            @Html.ValidationSummary()
 
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Order Number:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="orderNum" value="@orderNum" readonly />
-                    </div>
-                </div>
+            <p><a href="~/NavajaDesksHome">Return to Orders</a></p>
+            <form method="post">
+                <fieldset class="form-group">
+                    <legend class="col-form-legend">Order Details</legend>
 
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Customer Name:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="customer" value="" />
-                    </div>
-                </div>
-
-
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Desk Width:</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" name="deskWidthEntered">
-                            <option>24</option>
-                            <option>28</option>
-                            <option>32</option>
-                            <option>36</option>
-                            <option>40</option>
-                            <option>44</option>
-                            <option>48</option>
-                            <option>52</option>
-                            <option>56</option>
-                            <option>60</option>
-                        </select>
-
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Desk Length:</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" name="deskLengthEntered">
-                            <option>24</option>
-                            <option>28</option>
-                            <option>32</option>
-                            <option>36</option>
-                            <option>40</option>
-                            <option>44</option>
-                            <option>48</option>
-                            <option>52</option>
-                            <option>56</option>
-                            <option>60</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Number of Drawers:</label>
-                    <div class="col-sm-10">
-                        <select class="form-control" name="drawersEntered">
-                            <option value="0" >0 - $50</option>
-                            <option value="1">1 - $100</option>
-                            <option value="2">2 - $150</option>
-                            <option value="3">3 - $200</option>
-                            <option value="4">4 - $250</option>
-                            <option value="5">5 - $300</option>
-                            <option value="6">6 - $350</option>
-                            <option value="7">7 - $400</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                   
-
-                    <label class="col-sm-2 col-form-label">Desk Material:</label>
-                    <div class="col-sm-10">
-                        <div class="col-sm-2">
-                            <input id="pine" type="radio" name="material" value="Pine" />
-                            <label class="form-check-label" for="pine"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Order Number:</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="orderNum" value="@orderNum" readonly />
                         </div>
-                        <div class="col-sm-2">
-                            <input id="oak" type="radio" name="material" value="Oak" />
-                            <label class="form-check-label" for="oak"><img class="img-rounded" src="~/images/oak_sample.jpg" width="70" height="60" /></label>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Customer Name:</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="customer" value="" />
                         </div>
-                        <div class="col-sm-2">
-                            <input id="maple" type="radio" name="material" value="Maple" />
-                            <label class="form-check-label" for="maple"><img class="img-rounded" src="~/images/maple-sample.jpg" width="70" height="60" /></label>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Desk Width:</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="deskWidthEntered">
+                                <option>24</option>
+                                <option>28</option>
+                                <option>32</option>
+                                <option>36</option>
+                                <option>40</option>
+                                <option>44</option>
+                                <option>48</option>
+                                <option>52</option>
+                                <option>56</option>
+                                <option>60</option>
+                            </select>
+
                         </div>
-                        <div class="col-sm-2">
-                            <input id="ash" type="radio" name="material" value="Ash" />
-                            <label class="form-check-label" for="ash"><img class="img-rounded" src="~/images/ash-sample.jpg" width="70" height="60" /></label>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Desk Length:</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="deskLengthEntered">
+                                <option>24</option>
+                                <option>28</option>
+                                <option>32</option>
+                                <option>36</option>
+                                <option>40</option>
+                                <option>44</option>
+                                <option>48</option>
+                                <option>52</option>
+                                <option>56</option>
+                                <option>60</option>
+                            </select>
                         </div>
-                        <div class="col-sm-2">
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Number of Drawers:</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="drawersEntered">
+                                <option value="0">0 - $0</option>
+                                <option value="1">1 - $50</option>
+                                <option value="2">2 - $100</option>
+                                <option value="3">3 - $150</option>
+                                <option value="4">4 - $200</option>
+                                <option value="5">5 - $250</option>
+                                <option value="6">6 - $300</option>
+                                <option value="7">7 - $350</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+
+
+                        <label class="col-sm-2 col-form-label">Desk Material:</label>
+                        <div class="col-sm-10">
+                            <div class="col-sm-2">
+                                <input id="pine" type="radio" name="material" value="Pine" />
+                                <label class="form-check-label" for="pine"><img class="img-rounded" src="~/images/pine-sample.jpg" width="70" height="60" /></label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input id="oak" type="radio" name="material" value="Oak" />
+                                <label class="form-check-label" for="oak"><img class="img-rounded" src="~/images/oak_sample.jpg" width="70" height="60" /></label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input id="maple" type="radio" name="material" value="Maple" />
+                                <label class="form-check-label" for="maple"><img class="img-rounded" src="~/images/maple-sample.jpg" width="70" height="60" /></label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input id="ash" type="radio" name="material" value="Ash" />
+                                <label class="form-check-label" for="ash"><img class="img-rounded" src="~/images/ash-sample.jpg" width="70" height="60" /></label>
+                            </div>
+                            <div class="col-sm-2">
                                 <input id="cherry" type="radio" name="material" value="Cherry" />
                                 <label class="form-check-label" for="cherry"><img class="img-rounded" src="~/images/cherry-sample.jpg" width="70" height="60" /></label>
-                        </div>
+                            </div>
                             <div class="col-sm-2">
                                 <input id="birch" type="radio" name="material" value="Birch" />
                                 <label class="form-check-label" for="birch"><img class="img-rounded" src="~/images/birch-sample.jpg" width="70" height="60" /></label>
                             </div>
-                       </div>
-                </div>
+                        </div>
+                    </div>
 
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Rush Order Option:</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="rushEntered">
+                                <option value="0">None</option>
+                                <option>3</option>
+                                <option>5</option>
+                                <option>7</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    @*<div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Total Price:</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="totalEntered" value="$@totalEntered" readonly /> @*readonly (we need to caculate this after they submit the form)
+                        </div>
+                    </div>*@
+
+                    <input type="hidden" name="orderid" value="@orderId" />
+                </fieldset>
                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Rush Order Option:</label>
+                    <label class="col-sm-2 col-form-label"></label>
                     <div class="col-sm-10">
-                        <select class="form-control" name="rushEntered">
-                            <option value="0">None</option>
-                            <option>3</option>
-                            <option>5</option>
-                            <option>7</option>
-                        </select>
+                        @*<button class="btn btn-warning btn-lg btn-block" type="submit" name="buttonCalculate" value="Add Order">Calculate</button>*@
+                        <button class="btn btn-success btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Add Order</button>
                     </div>
                 </div>
 
-                @*<div class="form-group row">
-                    <label class="col-sm-2 col-form-label">Total Price:</label>
-                    <div class="col-sm-10">
-                        <input class="form-control" type="text" name="totalEntered" value="$@totalEntered" readonly /> @*readonly (we need to caculate this after they submit the form)
-                    </div>
-                </div>*@
-
-                <input type="hidden" name="orderid" value="@orderId" />
-            </fieldset>
-            <div class="form-group row">
-                <label class="col-sm-2 col-form-label"></label>
-                <div class="col-sm-10">
-                    @*<button class="btn btn-warning btn-lg btn-block" type="submit" name="buttonCalculate" value="Add Order">Calculate</button>*@
-                    <button class="btn btn-success btn-lg btn-block" type="submit" name="buttonAdd" value="Add Order">Add Order</button>
-                </div>
-            </div>
-
-        </form>
-    </div>
+            </form>
+        </div>
     @RenderPage("~/Shared/_Footer.cshtml")
 </body>
 </html>
